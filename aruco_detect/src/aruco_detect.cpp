@@ -336,7 +336,7 @@ void FiducialsNode::imageCallback(const sensor_msgs::ImageConstPtr & msg)
     }
 
     if(verbose){
-        ROS_INFO("Got image %d", msg->header.seq);       
+        ROS_INFO("Got image %d", msg->header.seq);
     }
 
     fiducial_msgs::FiducialArray fva;
@@ -358,7 +358,7 @@ void FiducialsNode::imageCallback(const sensor_msgs::ImageConstPtr & msg)
         for (size_t i=0; i<ids.size(); i++) {
             if (std::count(ignoreIds.begin(), ignoreIds.end(), ids[i]) != 0) {
                 if(verbose){
-                    ROS_INFO("Ignoring id %d", ids[i]);                    
+                    ROS_INFO("Ignoring id %d", ids[i]);
                 }
                 continue;
             }
@@ -533,7 +533,7 @@ void FiducialsNode::poseEstimateCallback(const FiducialArrayConstPtr & msg)
     }
     if (vis_msgs)
         pose_pub.publish(vma);
-    else 
+    else
         pose_pub.publish(fta);
 }
 
@@ -665,7 +665,7 @@ FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(nh)
 
     if (vis_msgs)
         pose_pub = nh.advertise<vision_msgs::Detection2DArray>("fiducial_transforms", 1);
-    else        
+    else
         pose_pub = nh.advertise<fiducial_msgs::FiducialTransformArray>("fiducial_transforms", 1);
 
     dictionary = aruco::getPredefinedDictionary(dicno);
@@ -697,21 +697,7 @@ FiducialsNode::FiducialsNode() : nh(), pnh("~"), it(nh)
 #if CV_MINOR_VERSION==2 and CV_MAJOR_VERSION==3
     pnh.param<bool>("doCornerRefinement",detectorParams->doCornerRefinement, true); /* default false */
 #else
-    bool doCornerRefinement = true;
-    pnh.param<bool>("doCornerRefinement", doCornerRefinement, true);
-    if (doCornerRefinement) {
-       bool cornerRefinementSubPix = true;
-       pnh.param<bool>("cornerRefinementSubPix", cornerRefinementSubPix, true);
-       if (cornerRefinementSubPix) {
-         detectorParams->cornerRefinementMethod = aruco::CORNER_REFINE_SUBPIX;
-       }
-       else {
-         detectorParams->cornerRefinementMethod = aruco::CORNER_REFINE_CONTOUR;
-       }
-    }
-    else {
-       detectorParams->cornerRefinementMethod = aruco::CORNER_REFINE_NONE;
-    }
+    pnh.param<bool>("cornerRefinementMethod", detectorParams->cornerRefinementMethod, 0);
 #endif
     pnh.param<double>("errorCorrectionRate", detectorParams->errorCorrectionRate , 0.6);
     pnh.param<double>("minCornerDistanceRate", detectorParams->minCornerDistanceRate , 0.05);
